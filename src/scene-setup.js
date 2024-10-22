@@ -55,23 +55,3 @@ window.addEventListener('resize', () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 });
-
-// Handle fullscreen
-window.addEventListener('dblclick', () => {
-    const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
-    console.log(fullscreenElement);
-    if (!fullscreenElement) {
-        if (renderer.domElement.requestFullscreen) {
-            renderer.domElement.requestFullscreen();
-        } else if (renderer.domElement.webkitRequestFullscreen) {
-            renderer.domElement.webkitRequestFullscreen();
-        }
-    }
-    else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        }
-    }
-});

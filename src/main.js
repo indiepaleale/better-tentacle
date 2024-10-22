@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { scene, camera, renderer } from './scene-setup';
 import { lowerSegment, upperSegment } from './tentacle';
-import tentacleControls from './gui';
+import { tentacleControls } from './gui';
 import { Noise } from 'noisejs';
 import * as socket from './ws';
 
@@ -47,16 +47,21 @@ function animate(deltaTime) {
         tentacleControls.upperX = noise.simplex2(time, 100) * movementRange;
         tentacleControls.upperZ = noise.simplex2(100, time) * movementRange;
     }
-    if (tentacleControls.rl_py) {
+    if (tentacleControls.rl_py && tentacleControls.isModelReady) {
         socket.tick();
         console.log(socket.state_buffer);
         const state = socket.state_buffer.shift();
-        if (state) {
-            const rl_control = state.pos;
-            tentacleControls.lowerX = rl_control[0];
-            tentacleControls.lowerZ = rl_control[1];
-            tentacleControls.upperX = rl_control[2];
-            tentacleControls.upperZ = rl_control[3];
+        try {
+            if (state) {
+                const rl_control = state.pos;
+                tentacleControls.lowerX = rl_control[0];
+                tentacleControls.lowerZ = rl_control[1];
+                tentacleControls.upperX = rl_control[2];
+                tentacleControls.upperZ = rl_control[3];
+            }
+        }
+        catch (e) {
+            console.error('Failed to parse state:', e);
         }
     }
 

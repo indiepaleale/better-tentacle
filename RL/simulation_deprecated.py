@@ -55,29 +55,25 @@ def on_message(ws, message):
     if data["command"] == "tick":
         action = ppo_agent.select_action(state)
         state, reward, done = env.step(action)
-        
+
         control_pos = state[:4].tolist()
         target = state[-3:].tolist()
-        
-        print("tick", control_pos, target)
-        ws.send(
-            json.dumps({ "pos": control_pos, "target": target})
-        )
+
+        # print("tick", control_pos, target)
+        ws.send(json.dumps({"type": "PYTHON", "pos": control_pos, "target": target}))
 
     if data["command"] == "reset":
         print("reset")
         state = env.reset()
         control_pos = state[:4].tolist()
         target = state[-3:].tolist()
-        
+
         print("reset", control_pos, target)
-        ws.send(
-            json.dumps({ "pos": control_pos, "target": target})
-        )
+        ws.send(json.dumps({"type": "PYTHON", "pos": control_pos, "target": target}))
 
 
 def on_error(ws, error):
-    
+
     print(error)
 
 
@@ -86,7 +82,8 @@ def on_close(ws):
 
 
 def on_open(ws):
-    print("### opened ###")
+    print("Server connected")
+    ws.send(json.dumps({"type": "PYTHON", "message": "Hello from Python"}))
 
 
 if __name__ == "__main__":
@@ -98,3 +95,5 @@ if __name__ == "__main__":
 
     ws.on_open = on_open
     ws.run_forever()
+    print("Python client started")
+    

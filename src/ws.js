@@ -1,15 +1,13 @@
-// ws.js
-const url = 'ws://localhost:8080';
+import { tentacleControls } from './gui';
+
+const url = 'ws://localhost:8888';
 const socket = new WebSocket(url);
-
-
 let state_buffer = [];
 
 // Event listener for when the connection is opened
 socket.addEventListener('open', () => {
     console.log('Connected to the WebSocket server');
-    // Example: Send a message to the server
-    socket.send('Hello Server!');
+    socket.send(JSON.stringify({ type: 'identify', role: 'frontend' }));
 });
 
 // Event listener for when a message is received from the server
@@ -29,27 +27,35 @@ socket.addEventListener('close', (event) => {
 
 // Function to handle received messages
 function handleMessage(message) {
-    if (message instanceof Blob) {
-        const reader = new FileReader();
-        reader.onload = function () {
-            const text = reader.result;
-            try {
-                const data = JSON.parse(text);
-                state_buffer.push(data);                
-                // Handle the JSON data
-            } catch (e) {
-                // console.error('Error parsing JSON:', e);
-            }
-        };
-        reader.readAsText(message);
-    } else {
-        console.log('non-Blob message:', message);
+    try {
+        const parsedMessage = JSON.parse(message);
+        switch (parsedMessage.type) {
+            case 'state':
+                const state = {
+                    pos: parsedMessage.pos,
+                    target: parsedMessage.target,
+                }
+                state_buffer.push(state);
+                break;
+
+            case 'message':
+                if(parsedMessage.status === 'waiting')
+                    tentacleControls.setStatus(false);
+                if(parsedMessage.status === 'ready')
+                    tentacleControls.setStatus(true);
+            default:
+                break;
+        }
+        console.log(parsedMessage);
+    }
+    catch (e) {
+        console.error('Failed to parse message:', e);
     }
 }
 
 function tick() {
     if (socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ command: 'tick' }));
+        socket.send(JSON.stringify({ type: 'command', command: 'step' }));
     } else {
         console.error('WebSocket is not open. Ready state:', socket.readyState);
     }
@@ -57,7 +63,7 @@ function tick() {
 
 function reset() {
     if (socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ command: 'reset' }));
+        socket.send(JSON.stringify({ type: 'command', command: 'reset' }));
     } else {
         console.error('WebSocket is not open. Ready state:', socket.readyState);
     }
