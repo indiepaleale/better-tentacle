@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
+  type: 'module',
   root: './src', // Assuming your main files are in the 'src' directory
   build: {
     outDir: '../dist', // Output directory for the build

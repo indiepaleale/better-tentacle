@@ -3,7 +3,6 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 const gui = new GUI();
 const tentacleControls = {
     animated: false,
-    rl_py:false,
     lowerX: 0,
     lowerZ: 0,
     upperX: 0,
@@ -11,7 +10,6 @@ const tentacleControls = {
 }
 
 gui.add(tentacleControls, 'animated').name('Animated');
-gui.add(tentacleControls, 'rl_py').name('RL');
 gui.add(tentacleControls, 'lowerX', -5, 5).name('S1 - Lower X').listen();
 gui.add(tentacleControls, 'lowerZ', -5, 5).name('S2 - Lower Z').listen();
 gui.add(tentacleControls, 'upperX', -5, 5).name('S3 - Upper X').listen();

@@ -3,7 +3,6 @@ import { scene, camera, renderer } from './scene-setup';
 import { lowerSegment, upperSegment } from './tentacle';
 import tentacleControls from './gui';
 import { Noise } from 'noisejs';
-import * as socket from './ws';
 
 const pointsBufferSize = 10000;
 const positions = new Float32Array(pointsBufferSize * 3);
@@ -46,18 +45,6 @@ function animate(deltaTime) {
         tentacleControls.lowerZ = noise.simplex2(0, time) * movementRange;
         tentacleControls.upperX = noise.simplex2(time, 100) * movementRange;
         tentacleControls.upperZ = noise.simplex2(100, time) * movementRange;
-    }
-    if (tentacleControls.rl_py) {
-        socket.tick();
-        console.log(socket.state_buffer);
-        const state = socket.state_buffer.shift();
-        if (state) {
-            const rl_control = state.pos;
-            tentacleControls.lowerX = rl_control[0];
-            tentacleControls.lowerZ = rl_control[1];
-            tentacleControls.upperX = rl_control[2];
-            tentacleControls.upperZ = rl_control[3];
-        }
     }
 
     lowerSegment.fk(tentacleControls.lowerX, tentacleControls.lowerZ);
