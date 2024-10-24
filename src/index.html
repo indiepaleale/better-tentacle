@@ -8,11 +8,18 @@
         body {
             margin: 0;
         }
+
+        canvas { 
+            display: block; 
+            /* CSS to prevent blurring and enable sharp pixel scaling */
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;  /* Backup for better cross-browser support */
+        }
     </style>
 </head>
 
 <body>
-    <script type="module" src="/main.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
 
 </html>

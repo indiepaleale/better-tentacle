@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { scene, camera, renderer } from './scene-setup';
+import { scene, camera, renderer, orthoCamera, loadedGeometry } from './scene-setup';
 import { lowerSegment, upperSegment } from './tentacle';
 import tentacleControls from './gui';
 import { Noise } from 'noisejs';

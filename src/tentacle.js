@@ -1,10 +1,13 @@
 import * as THREE from 'three';
-import { scene, camera, renderer } from './scene-setup';
+import { scene, camera, renderer, loadedGeometry } from './scene-setup';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+
 
 
 const geometry = new THREE.CylinderGeometry(3, 3, 1);
 const material = new THREE.MeshPhongMaterial({ color: 0xffffff });
-const disk = new THREE.Mesh(geometry, material);
+const disk = new THREE.Mesh(undefined, material);
 scene.add(disk);
 
 
@@ -58,16 +61,15 @@ class Segment {
     }
 
     ik_angleOnly = () => {
-       
+
     }
 
-    _init = (color) => {
-
-        const geometry = new THREE.CylinderGeometry(2.5, 2.5, 1);
-        const material = new THREE.MeshPhongMaterial({ color: color });
-
+    _init = () => {
+        const geometry = new THREE.CylinderGeometry(3, 3, 1, 12);
+        const edges = new THREE.EdgesGeometry(geometry, 30);
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
         for (let i = 1; i <= this.numSegments; i++) {
-            const segment = new THREE.Mesh(geometry, material);
+            const segment = new THREE.LineSegments(edges, lineMaterial);
             segment.position.y = i * this.gap;
             this.segments.push(segment);
             this.rootObject.add(segment);
